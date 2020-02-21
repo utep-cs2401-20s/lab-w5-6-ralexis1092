@@ -3,12 +3,14 @@ public class SnakeGame {
     //Attributes
     private boolean[][] game;
     private int[] headPosition;
+    //headPosition[0] = xPosition = Collumn
+    //headPosition[1] = yPosition = Row
     private static int exhaustiveChecks;
     private static int recursiveChecks;
 
     //Constructors
 
-    public SnakeGame(){
+    public SnakeGame() {
 
         this.game = new boolean[1][1];
 
@@ -26,29 +28,31 @@ public class SnakeGame {
 
     //Main Methods
 
-    public int[] findTailExhaustive(){
+    public int[] findTailExhaustive() {
 
         int count = 0;
         int[] tail = new int[3];
+        //tail[0] = x = col
+        //tail[1] = y = row
+        //tail[2] = length of the snake
 
-        for(int row = 0; row < this.game.length;row++){
+        for (int row = 0; row < this.game.length; row++) {
 
-            for(int col = 0; col < this.game.length;col++){
-
-                if(this.game[row][col]){
-
+            for (int col = 0; col < this.game.length; col++) {
+                //Checks for the snakes length
+                if (this.game[row][col]) {
                     count++;
                 }
-                else{
-
+                //checks for tail's position
+                if (findNeighbors(row, col) == 1 && (col != headPosition[0] || row != headPosition[1])) {
+                    tail[0] = row;
+                    tail[1] = col;
                 }
-
-
             }
 
         }
         tail[2] = count;
-
+        return tail;
     }
 
     public int[] findTailRecursive(){
@@ -92,13 +96,37 @@ public class SnakeGame {
 
         for(int i = 0; i < this.game.length; i++) {
 
-            for(int j = 0; j < this.game[i].length; j++){
+            for (int j = 0; j < this.game[i].length; j++) {
 
                 System.out.print(this.game[i][j] + " ");
             }
             System.out.println();
         }
         System.out.println();
+    }
+
+    public int findNeighbors(int row, int col) {
+
+        int neighborCounter = 0;
+
+        //Top
+        if (row > 0 && this.game[row][col]) {
+            neighborCounter++;
+        }
+        //Bottom
+        if (row < this.game.length - 1 && this.game[row][col]) {
+            neighborCounter++;
+        }
+        //Left
+        if (col > 0 && this.game[row][col]) {
+            neighborCounter++;
+        }
+        //Right
+        if (col < this.game.length - 1 && this.game[row][col]) {
+            neighborCounter++;
+        }
+        return neighborCounter;
+
     }
 
 
