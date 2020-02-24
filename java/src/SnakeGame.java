@@ -13,16 +13,23 @@ public class SnakeGame {
     public SnakeGame() {
 
         this.game = new boolean[1][1];
+        this.headPosition = new int[2];
+        this.headPosition[0] = 0;
+        this.headPosition[1] = 0;
+        this.exhaustiveChecks = 0;
+        this.recursiveChecks = 0;
 
     }
 
     public SnakeGame(boolean[][] game, int xPosition, int yPosition) {
 
         this.game = new boolean[game.length][game.length];
-        copyArray(game,this.game);
+        copyArray(game, this.game);
         this.headPosition = new int[2];
         this.headPosition[0] = xPosition;
         this.headPosition[1] = yPosition;
+        this.exhaustiveChecks = 0;
+        this.recursiveChecks = 0;
 
     }
 
@@ -30,28 +37,34 @@ public class SnakeGame {
 
     public int[] findTailExhaustive() {
 
-        int count = 0;
+        int lengthCounter = 0;
         int[] tail = new int[3];
-        //tail[0] = x = col
-        //tail[1] = y = row
+        int exhaustiveCounter = 0;
+        //tail[0] = x = row
+        //tail[1] = y = col
         //tail[2] = length of the snake
 
         for (int row = 0; row < this.game.length; row++) {
 
             for (int col = 0; col < this.game.length; col++) {
+
+                exhaustiveCounter++;
                 //Checks for the snakes length
                 if (this.game[row][col]) {
-                    count++;
+                    lengthCounter++;
                 }
                 //checks for tail's position
-                if (findNeighbors(row, col) == 1 && (col != headPosition[0] || row != headPosition[1])) {
+                if (findNeighbors(row, col) == 1 && (row != headPosition[0] || col != headPosition[1])) {
                     tail[0] = row;
                     tail[1] = col;
+                    this.exhaustiveChecks = exhaustiveCounter;
+
                 }
+
             }
 
         }
-        tail[2] = count;
+        tail[2] = lengthCounter;
         return tail;
     }
 
@@ -66,18 +79,22 @@ public class SnakeGame {
 
     }
 
-    private void resetCounters(){
+    private void resetCounters() {
 
-
-    }
-
-    private static int getRecursiveChecks(){
-
+        this.exhaustiveChecks = 0;
+        this.recursiveChecks = 0;
 
     }
 
-    private static int getExhaustiveChecks(){
+    private int getRecursiveChecks() {
 
+        return this.recursiveChecks;
+
+    }
+
+    private int getExhaustiveChecks() {
+
+        return this.exhaustiveChecks;
 
     }
 
