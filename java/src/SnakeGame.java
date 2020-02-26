@@ -3,8 +3,6 @@ public class SnakeGame {
     //Attributes
     private boolean[][] game;
     private int[] headPosition;
-    //headPosition[0] = xPosition = Collumn
-    //headPosition[1] = yPosition = Row
     private static int exhaustiveChecks;
     private static int recursiveChecks;
 
@@ -70,12 +68,70 @@ public class SnakeGame {
 
     public int[] findTailRecursive(){
 
+         return findTailRecursive(this.headPosition, this.headPosition);
 
     }
 
 
-    private int[] findTailRecursive(int[] currentPosition, int[] previousPosition){
+    private int[] findTailRecursive(int[] currentPosition, int[] previousPosition) {
 
+        int row1 = currentPosition[0];
+        int col1 = currentPosition[1];
+        int row2 = previousPosition[0];
+        int col2 = previousPosition[1];
+        int[] tail = new int[3];
+        this.recursiveChecks++;
+        int[] a = new int[2];
+
+        //base case
+        if (findNeighbors(row1, col1) == 1 && (row1 != headPosition[0] || col1 != headPosition[1])) {
+
+            tail[0] = row1;
+            tail[1] = col1;
+            tail[2] = recursiveChecks;
+            return tail;
+
+        }
+        //Head case
+        if (row1 == headPosition[0] && col1 == headPosition[1]) {
+            String direction = findHeadNeighbor(row1, col1);
+            if (direction.equals("top")) {
+                a[0] = row1 - 1;
+                a[1] = col1;
+            } else if (direction.equals("bottom")) {
+                a[0] = row1 + 1;
+                a[1] = col1;
+            } else if (direction.equals("left")) {
+                a[0] = row1;
+                a[1] = col1 - 1;
+            } else if (direction.equals("right")) {
+                a[0] = row1;
+                a[1] = col1 + 1;
+            }
+            return findTailRecursive(a, currentPosition);
+
+        }
+        //Other case TOP
+        if (this.game[row1 - 1][col1] && (row1 - 1 != row2 || col1 != col2)) {
+            a[0] = row1 - 1;
+            a[1] = col1;
+        }
+        //Other case Bottom
+        if (this.game[row1 + 1][col1] && (row1 + 1 != row2 || col1 != col2)) {
+            a[0] = row1 + 1;
+            a[1] = col1;
+        }
+        //Other case Left
+        if (this.game[row1][col1 - 1] && (row1 != row2 || col1 - 1 != col2)) {
+            a[0] = row1;
+            a[1] = col1 - 1;
+        }
+        //Other case Right
+        if (this.game[row1][col1 + 1] && (row1 != row2 || col1 + 1 != col2)) {
+            a[0] = row1;
+            a[1] = col1 + 1;
+        }
+        return findTailRecursive(a, currentPosition);
 
     }
 
@@ -127,24 +183,45 @@ public class SnakeGame {
         int neighborCounter = 0;
 
         //Top
-        if (row > 0 && this.game[row][col]) {
+        if (row > 0 && this.game[row - 1][col]) {
             neighborCounter++;
         }
         //Bottom
-        if (row < this.game.length - 1 && this.game[row][col]) {
+        if (row < this.game.length - 1 && this.game[row + 1][col]) {
             neighborCounter++;
         }
         //Left
-        if (col > 0 && this.game[row][col]) {
+        if (col > 0 && this.game[row][col - 1]) {
             neighborCounter++;
         }
         //Right
-        if (col < this.game.length - 1 && this.game[row][col]) {
+        if (col < this.game.length - 1 && this.game[row][col + 1]) {
             neighborCounter++;
         }
         return neighborCounter;
 
     }
 
+    public String findHeadNeighbor(int row, int col) {
 
+        String direction = "";
+        //Top
+        if (row > 0 && this.game[row - 1][col]) {
+            direction = "top";
+        }
+        //Bottom
+        if (row < this.game.length - 1 && this.game[row + 1][col]) {
+            direction = "bottom";
+        }
+        //Left
+        if (col > 0 && this.game[row][col - 1]) {
+            direction = "left";
+        }
+        //Right
+        if (col < this.game.length - 1 && this.game[row][col + 1]) {
+            direction = "right";
+        }
+        return direction;
+
+    }
 }
