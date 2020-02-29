@@ -11,6 +11,7 @@ public class SnakeGame {
     public SnakeGame() {
 
         this.game = new boolean[1][1];
+        this.game[0][0] = true;
         this.headPosition = new int[2];
         this.headPosition[0] = 0;
         this.headPosition[1] = 0;
@@ -35,6 +36,7 @@ public class SnakeGame {
 
     public int[] findTailExhaustive() {
 
+        resetCounters();
         int lengthCounter = 0;
         int[] tail = new int[3];
         int exhaustiveCounter = 0;
@@ -44,7 +46,7 @@ public class SnakeGame {
 
         for (int row = 0; row < this.game.length; row++) {
 
-            for (int col = 0; col < this.game.length; col++) {
+            for (int col = 0; col < this.game[row].length; col++) {
 
                 exhaustiveCounter++;
                 //Checks for the snakes length
@@ -52,7 +54,14 @@ public class SnakeGame {
                     lengthCounter++;
                 }
                 //checks for tail's position
-                if (findNeighbors(row, col) == 1 && (row != headPosition[0] || col != headPosition[1])) {
+                if (findNeighbors(row, col) == 0 && (row == headPosition[0] && col == headPosition[1])) {
+
+                    tail[0] = row;
+                    tail[1] = col;
+                    this.exhaustiveChecks = exhaustiveCounter;
+
+                }
+                if (findNeighbors(row, col) == 1 && (row != headPosition[0] || col != headPosition[1]) && this.game[row][col]) {
                     tail[0] = row;
                     tail[1] = col;
                     this.exhaustiveChecks = exhaustiveCounter;
@@ -68,6 +77,7 @@ public class SnakeGame {
 
     public int[] findTailRecursive(){
 
+        resetCounters();
          return findTailRecursive(this.headPosition, this.headPosition);
 
     }
@@ -92,6 +102,16 @@ public class SnakeGame {
             return tail;
 
         }
+        //Only the Head edge case
+        if (findNeighbors(row1, col1) == 0 && (row1 == headPosition[0] && col1 == headPosition[1])) {
+
+            tail[0] = row1;
+            tail[1] = col1;
+            tail[2] = recursiveChecks;
+            return tail;
+
+        }
+
         //Head case
         if (row1 == headPosition[0] && col1 == headPosition[1]) {
             String direction = findHeadNeighbor(row1, col1);
@@ -112,24 +132,32 @@ public class SnakeGame {
 
         }
         //Other case TOP
-        if (this.game[row1 - 1][col1] && (row1 - 1 != row2 || col1 != col2)) {
-            a[0] = row1 - 1;
-            a[1] = col1;
+        if (row1 > 0) {
+            if (this.game[row1 - 1][col1] && (row1 - 1 != row2 || col1 != col2)) {
+                a[0] = row1 - 1;
+                a[1] = col1;
+            }
         }
         //Other case Bottom
-        if (this.game[row1 + 1][col1] && (row1 + 1 != row2 || col1 != col2)) {
-            a[0] = row1 + 1;
-            a[1] = col1;
+        if (row1 < this.game.length - 1) {
+            if (this.game[row1 + 1][col1] && (row1 + 1 != row2 || col1 != col2)) {
+                a[0] = row1 + 1;
+                a[1] = col1;
+            }
         }
         //Other case Left
-        if (this.game[row1][col1 - 1] && (row1 != row2 || col1 - 1 != col2)) {
-            a[0] = row1;
-            a[1] = col1 - 1;
+        if (col1 > 0) {
+            if (this.game[row1][col1 - 1] && (row1 != row2 || col1 - 1 != col2)) {
+                a[0] = row1;
+                a[1] = col1 - 1;
+            }
         }
         //Other case Right
-        if (this.game[row1][col1 + 1] && (row1 != row2 || col1 + 1 != col2)) {
-            a[0] = row1;
-            a[1] = col1 + 1;
+        if (col1 < this.game.length - 1) {
+            if (this.game[row1][col1 + 1] && (row1 != row2 || col1 + 1 != col2)) {
+                a[0] = row1;
+                a[1] = col1 + 1;
+            }
         }
         return findTailRecursive(a, currentPosition);
 
@@ -142,13 +170,13 @@ public class SnakeGame {
 
     }
 
-    private int getRecursiveChecks() {
+    public int getRecursiveChecks() {
 
         return this.recursiveChecks;
 
     }
 
-    private int getExhaustiveChecks() {
+    public int getExhaustiveChecks() {
 
         return this.exhaustiveChecks;
 
